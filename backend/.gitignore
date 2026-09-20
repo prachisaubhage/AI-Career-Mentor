@@ -1,0 +1,13 @@
+node_modules/
+.env
+uploads/resumes/*
+!uploads/resumes/.gitkeep
+uploads/projects/*
+!uploads/projects/.gitkeep
+uploads/certifications/*
+!uploads/certifications/.gitkeep
+uploads/internships/*
+!uploads/internships/.gitkeep
+uploads/achievements/*
+!uploads/achievements/.gitkeep
+.DS_Store
