@@ -1,0 +1,425 @@
+/* =========================================
+   AI CAREER MENTOR DASHBOARD
+========================================= */
+
+.factor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 35px;
+}
+
+.factor {
+  width: 100%;
+}
+
+.factor-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.factor-header span {
+  color: #4b5563;
+}
+
+.factor-header strong {
+  color: #6366f1;
+  font-size: 11px;
+}
+
+.factor-bar {
+  width: 100%;
+  height: 8px;
+  background: #edf0f5;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.factor-bar div {
+  height: 100%;
+  background: #6366f1;
+  border-radius: 20px;
+}
+
+.explain-note {
+  margin-top: 24px;
+  padding: 14px 16px;
+  background: #f5f6ff;
+  border: 1px solid #e0e3ff;
+  border-radius: 9px;
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.explain-note strong {
+  color: #4f46e5;
+}
+
+.explain-note span {
+  color: #6b7280;
+}
+
+
+/* =========================================
+   AI STATUS BADGE
+========================================= */
+
+.ai-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #4f46e5;
+  padding: 6px 12px;
+  background: #eef2ff;
+  border-radius: 20px;
+}
+
+.ai-status span:first-child {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6366f1;
+  flex-shrink: 0;
+}
+
+
+/* =========================================
+   SCORE PILL
+========================================= */
+
+.score-pill {
+  display: inline-block;
+  padding: 5px 12px;
+  background: #eef2ff;
+  color: #4f46e5;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* =========================================
+   MODULE LABEL
+========================================= */
+
+.module-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #6366f1;
+}
+
+
+/* =========================================
+   RECORD STAT CARDS
+========================================= */
+
+.dashboard-records-grid {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.record-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.record-stat-card h2 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 4px 0 2px;
+}
+
+.record-stat-card .text-btn {
+  margin-top: 8px;
+  text-align: left;
+  padding: 0;
+  font-size: 11px;
+}
+
+
+/* =========================================
+   CODING / APTITUDE STATS
+========================================= */
+
+.coding-stats-dashboard,
+.aptitude-stats-dashboard {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.coding-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9fc;
+  border: 1px solid #e8eaf0;
+  border-radius: 10px;
+  min-width: 70px;
+  flex: 1;
+}
+
+.coding-stat-item strong {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a202c;
+  line-height: 1.2;
+}
+
+.coding-stat-item span {
+  font-size: 10px;
+  color: #8b93a4;
+  font-weight: 600;
+  margin-top: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.coding-easy strong  { color: #10b981; }
+.coding-medium strong { color: #f59e0b; }
+.coding-hard strong  { color: #ef4444; }
+
+.coding-stats {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.coding-stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9fc;
+  border: 1px solid #e8eaf0;
+  border-radius: 10px;
+  flex: 1;
+}
+
+.coding-stats > div strong {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a202c;
+}
+
+.coding-stats > div span {
+  font-size: 10px;
+  color: #8b93a4;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 3px;
+}
+
+
+/* =========================================
+   MODULE DASHBOARD GRID (Aptitude page)
+========================================= */
+
+.module-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+
+/* =========================================
+   ZERO STAT NOTE
+========================================= */
+
+.zero-stat-note {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #9ca3af;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   TOPIC TAGS
+========================================= */
+
+.topic-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.topic-tags span {
+  padding: 6px 12px;
+  background: #eef2ff;
+  color: #4f46e5;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+/* =========================================
+   PROJECT FLOW
+========================================= */
+
+.project-flow-card {
+  margin-top: 20px;
+}
+
+.project-flow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.flow-step {
+  flex: 1;
+  text-align: center;
+  background: #f8f9fc;
+  border: 1px solid #e8eaf0;
+  border-radius: 10px;
+  padding: 16px 8px;
+}
+
+.flow-number {
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  background: #eef2ff;
+  color: #4f46e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.flow-step strong {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.flow-step span {
+  font-size: 10px;
+  color: #8a92a1;
+}
+
+.flow-arrow {
+  color: #6366f1;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.skill-row {
+  margin-bottom: 16px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .module-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .roadmap-steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .project-flow {
+    flex-wrap: wrap;
+  }
+
+  .flow-step {
+    min-width: 140px;
+  }
+
+  .flow-arrow {
+    display: none;
+  }
+
+  .module-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width: 700px) {
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .factor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .roadmap-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .coding-stats-dashboard,
+  .aptitude-stats-dashboard {
+    gap: 8px;
+  }
+}
+
+/* =========================================
+   EMPTY STATE STYLES
+========================================= */
+.empty-analysis-box {
+  padding: 24px 16px;
+  background: #f9fafb;
+  border: 1px dashed #e5e7eb;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.empty-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.empty-description {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 0;
+}
