@@ -1,0 +1,216 @@
+.roadmap-page {
+  min-height: 100vh;
+  padding: 40px;
+  background: #f7f7fc;
+  color: #242433;
+}
+
+/* HEADER */
+
+.roadmap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 35px;
+}
+
+.page-label {
+  display: inline-block;
+  padding: 7px 14px;
+  border-radius: 20px;
+  background: #eceaff;
+  color: #5b50e8;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.roadmap-header h1 {
+  margin: 15px 0 8px;
+  font-size: 34px;
+}
+
+.roadmap-header p {
+  color: #777789;
+  font-size: 16px;
+}
+
+/* PROGRESS */
+
+.roadmap-progress {
+  width: 280px;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(40, 40, 80, 0.07);
+}
+
+.roadmap-progress span {
+  display: block;
+  color: #858597;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.roadmap-progress strong {
+  display: block;
+  color: #5b50e8;
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #ececf4;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  width: 65%;
+  height: 100%;
+  background: #5b50e8;
+  border-radius: 10px;
+}
+
+/* ROADMAP */
+
+.roadmap-container {
+  max-width: 950px;
+}
+
+.roadmap-step {
+  display: flex;
+  position: relative;
+  gap: 20px;
+}
+
+.step-number {
+  min-width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: #5b50e8;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  z-index: 2;
+}
+
+.step-line {
+  position: absolute;
+  left: 27px;
+  top: 55px;
+  width: 2px;
+  height: calc(100% - 35px);
+  background: #d9d7fa;
+}
+
+.roadmap-step:last-child .step-line {
+  display: none;
+}
+
+.step-card {
+  flex: 1;
+  background: white;
+  padding: 25px;
+  margin-bottom: 25px;
+  border-radius: 18px;
+  box-shadow: 0 5px 20px rgba(40, 40, 80, 0.07);
+  border: 1px solid #eeeeF5;
+}
+
+.step-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.step-card h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.step-card p {
+  margin: 0;
+  color: #777789;
+  line-height: 1.6;
+}
+
+.step-status {
+  height: fit-content;
+  padding: 7px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.completed {
+  background: #e5f8ee;
+  color: #198754;
+}
+
+.in-progress {
+  background: #eeeaff;
+  color: #5b50e8;
+}
+
+.upcoming {
+  background: #f1f1f5;
+  color: #777789;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.skill-tags span {
+  padding: 7px 12px;
+  background: #f5f4ff;
+  color: #5b50e8;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.roadmap-button {
+  border: none;
+  background: #5b50e8;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.roadmap-button:hover {
+  background: #4840c9;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .roadmap-page {
+    padding: 20px;
+  }
+
+  .roadmap-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .roadmap-progress {
+    width: auto;
+    width: 100%;
+  }
+
+  .step-top {
+    flex-direction: column;
+  }
+}
