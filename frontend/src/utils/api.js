@@ -1,8 +1,11 @@
 // Centralized API configuration for AI Career Mentor
 
-export const API_BASE_URL =
+// Strip any accidental trailing /api from the base URL to prevent /api/api double-prefix
+const rawBase =
   (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) ||
   'http://localhost:5001';
+
+export const API_BASE_URL = rawBase.replace(/\/api\/?$/, '');
 
 export const API_ENDPOINTS = {
   SIGNUP: `${API_BASE_URL}/api/auth/signup`,
