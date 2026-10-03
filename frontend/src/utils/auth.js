@@ -433,6 +433,7 @@ export function logoutUser() {
   localStorage.removeItem("isAuthenticated");
   localStorage.removeItem("careerMentorCurrentUser");
   localStorage.removeItem("careerMentorProfile");
+  localStorage.removeItem("careerMentorToken");
 }
 
 // =======================================================
@@ -457,7 +458,10 @@ function userKey(email, suffix) {
 export function getProjects(email) {
   try {
     const raw = localStorage.getItem(userKey(email, "projects"));
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch (err) {
     console.error("Error reading projects:", err);
   }
@@ -469,7 +473,8 @@ export function getProjects(email) {
  */
 export function saveProjects(email, projects) {
   try {
-    localStorage.setItem(userKey(email, "projects"), JSON.stringify(projects));
+    const arr = Array.isArray(projects) ? projects : [];
+    localStorage.setItem(userKey(email, "projects"), JSON.stringify(arr));
   } catch (err) {
     console.error("Error saving projects:", err);
   }
@@ -483,7 +488,10 @@ export function saveProjects(email, projects) {
 export function getCertifications(email) {
   try {
     const raw = localStorage.getItem(userKey(email, "certifications"));
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch (err) {
     console.error("Error reading certifications:", err);
   }
@@ -495,7 +503,8 @@ export function getCertifications(email) {
  */
 export function saveCertifications(email, certs) {
   try {
-    localStorage.setItem(userKey(email, "certifications"), JSON.stringify(certs));
+    const arr = Array.isArray(certs) ? certs : [];
+    localStorage.setItem(userKey(email, "certifications"), JSON.stringify(arr));
   } catch (err) {
     console.error("Error saving certifications:", err);
   }
@@ -509,7 +518,10 @@ export function saveCertifications(email, certs) {
 export function getInternships(email) {
   try {
     const raw = localStorage.getItem(userKey(email, "internships"));
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch (err) {
     console.error("Error reading internships:", err);
   }
@@ -521,7 +533,8 @@ export function getInternships(email) {
  */
 export function saveInternships(email, internships) {
   try {
-    localStorage.setItem(userKey(email, "internships"), JSON.stringify(internships));
+    const arr = Array.isArray(internships) ? internships : [];
+    localStorage.setItem(userKey(email, "internships"), JSON.stringify(arr));
   } catch (err) {
     console.error("Error saving internships:", err);
   }
@@ -535,7 +548,10 @@ export function saveInternships(email, internships) {
 export function getAchievements(email) {
   try {
     const raw = localStorage.getItem(userKey(email, "achievements"));
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch (err) {
     console.error("Error reading achievements:", err);
   }
@@ -547,7 +563,8 @@ export function getAchievements(email) {
  */
 export function saveAchievements(email, achievements) {
   try {
-    localStorage.setItem(userKey(email, "achievements"), JSON.stringify(achievements));
+    const arr = Array.isArray(achievements) ? achievements : [];
+    localStorage.setItem(userKey(email, "achievements"), JSON.stringify(arr));
   } catch (err) {
     console.error("Error saving achievements:", err);
   }

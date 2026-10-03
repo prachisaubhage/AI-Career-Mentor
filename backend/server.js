@@ -22,6 +22,10 @@ const resumeRoutes = require('./routes/resumeRoutes');
 const codingRoutes = require('./routes/codingRoutes');
 const aptitudeRoutes = require('./routes/aptitudeRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+// ML Prediction route (connects existing trained model to the API)
+const predictionRoutes = require('./routes/predictionRoutes');
+// Gemini AI — Career Roadmap
+const roadmapRoutes    = require('./routes/roadmapRoutes');
 
 // Error middleware
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
@@ -62,10 +66,12 @@ app.use(
   })
 );
 
-// Rate Limiting: 200 requests per 15 minutes window
+// Rate Limiting: relaxed for local development, enforced in production
+const isDev = process.env.NODE_ENV !== 'production';
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200,
+  max: isDev ? 10000 : 200,
+  skip: () => isDev,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -101,6 +107,9 @@ app.use('/api/resume', resumeRoutes);
 app.use('/api/coding', codingRoutes);
 app.use('/api/aptitude', aptitudeRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/prediction', predictionRoutes); // ML placement readiness prediction
+app.use('/api/roadmap', roadmapRoutes);        // Gemini AI career roadmap
+
 
 // 404 & Centralized Error Handlers
 app.use(notFound);

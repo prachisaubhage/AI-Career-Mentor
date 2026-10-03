@@ -63,8 +63,8 @@ function Prediction() {
 
   const cgpa = Number(profile.cgpa || 0);
   const backlogs = Number(profile.backlogs || 0);
-  const coding = Number(profile.coding || 0);
-  const sql = Number(profile.sql || 0);
+  const coding = Number(profile.coding || profile.dsaCoding || 0);
+  const sql = Number(profile.sql || profile.sqlDbms || 0);
   const aptitude = Number(profile.aptitude || 0);
   const communication = Number(profile.communication || 0);
   const projects = Number(profile.projects || 0);
@@ -307,42 +307,42 @@ function Prediction() {
 
               <InputBox
                 title="CGPA"
-                value={profile.cgpa}
+                value={profile.cgpa || "—"}
               />
 
               <InputBox
                 title="Backlogs"
-                value={profile.backlogs}
+                value={profile.backlogs ?? "0"}
               />
 
               <InputBox
                 title="Aptitude"
-                value={`${profile.aptitude}%`}
+                value={`${profile.aptitude || 0}%`}
               />
 
               <InputBox
                 title="Coding"
-                value={`${profile.coding}%`}
+                value={`${profile.coding || profile.dsaCoding || 0}%`}
               />
 
               <InputBox
                 title="SQL / DBMS"
-                value={`${profile.sql}%`}
+                value={`${profile.sql || profile.sqlDbms || 0}%`}
               />
 
               <InputBox
                 title="Communication"
-                value={`${profile.communication}%`}
+                value={`${profile.communication || 0}%`}
               />
 
               <InputBox
                 title="Projects"
-                value={profile.projects}
+                value={profile.projects ?? 0}
               />
 
               <InputBox
                 title="Certifications"
-                value={profile.certifications}
+                value={profile.certifications ?? 0}
               />
 
             </div>

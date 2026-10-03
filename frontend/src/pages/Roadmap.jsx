@@ -1,5 +1,6 @@
 import Layout from "../components/Layout";
 import { useNavigate } from "react-router-dom";
+import "./Roadmap.css";
 
 function Roadmap() {
   const navigate = useNavigate();

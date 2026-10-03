@@ -1,0 +1,31 @@
+# ── Generated model file ──────────────────────────────────────────────────────
+# The trained model IS committed so it can be used without retraining.
+# If you prefer to regenerate it, uncomment the line below and run train_model.py.
+# models/placement_model.joblib
+
+# ── Python virtual environment — NEVER commit this ────────────────────────────
+venv/
+env/
+.env/
+.venv/
+ENV/
+
+# ── Python bytecode caches ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ── pip artefacts ─────────────────────────────────────────────────────────────
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ── Jupyter (if used for experimentation) ────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── OS artefacts ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
