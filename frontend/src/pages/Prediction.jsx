@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
+import {
+  getPlacementPrediction,
+  getStoredPrediction,
+  calculatePackageBand,
+} from "../services/predictionService";
 import "./Prediction.css";
 
 function Prediction() {
   const navigate = useNavigate();
 
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState(() => {
+    try {
+      const saved = localStorage.getItem("careerMentorProfile");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [predictionResult, setPredictionResult] = useState(() => getStoredPrediction());
 
   useEffect(() => {
     const savedProfile = localStorage.getItem("careerMentorProfile");
@@ -26,6 +39,17 @@ function Prediction() {
      Number(profile.projects || 0) > 0 ||
      Number(profile.certifications || 0) > 0)
   );
+
+  // Fetch prediction from existing ML pipeline whenever profile data is present (called unconditionally at top level)
+  useEffect(() => {
+    if (profile && hasUserData) {
+      getPlacementPrediction(profile).then((res) => {
+        if (res) {
+          setPredictionResult(res);
+        }
+      });
+    }
+  }, [profile, hasUserData]);
 
   if (!profile || !hasUserData) {
     return (
@@ -49,18 +73,6 @@ function Prediction() {
     );
   }
 
-  /*
-   * ------------------------------------------------
-   * PROTOTYPE READINESS CALCULATION
-   * ------------------------------------------------
-   *
-   * This is a frontend prototype calculation.
-   * It is NOT the final ML model.
-   *
-   * Later this formula will be replaced by
-   * the trained placement prediction model.
-   */
-
   const cgpa = Number(profile.cgpa || 0);
   const backlogs = Number(profile.backlogs || 0);
   const coding = Number(profile.coding || profile.dsaCoding || 0);
@@ -70,18 +82,13 @@ function Prediction() {
   const projects = Number(profile.projects || 0);
   const certifications = Number(profile.certifications || 0);
 
-  // Convert CGPA out of 10 into percentage-style score
+  // Fallback calculations in case ML service is starting up
   const cgpaScore = Math.min((cgpa / 10) * 100, 100);
-
-  // Project and certification contribution
   const projectScore = Math.min(projects * 20, 100);
   const certificationScore = Math.min(certifications * 15, 100);
-
-  // Backlog penalty
   const backlogPenalty = backlogs * 5;
 
-  // Prototype readiness calculation
-  let readiness = Math.round(
+  let fallbackReadiness = Math.round(
     cgpaScore * 0.20 +
     coding * 0.20 +
     sql * 0.15 +
@@ -91,30 +98,27 @@ function Prediction() {
     certificationScore * 0.10 -
     backlogPenalty
   );
+  fallbackReadiness = Math.max(0, Math.min(fallbackReadiness, 100));
 
-  readiness = Math.max(0, Math.min(readiness, 100));
+  // Readiness from ML prediction pipeline (or fallback)
+  const readiness =
+    predictionResult && predictionResult.score !== undefined
+      ? Math.round(predictionResult.score)
+      : fallbackReadiness;
 
+  // Readiness label from ML prediction pipeline
+  const readinessLabel =
+    (predictionResult && predictionResult.label) ||
+    (readiness >= 75
+      ? "High Readiness"
+      : readiness >= 60
+      ? "Moderate Readiness"
+      : "Needs Improvement");
 
-  // Readiness label
-  let readinessLabel = "Needs Improvement";
-
-  if (readiness >= 75) {
-    readinessLabel = "High Readiness";
-  } else if (readiness >= 60) {
-    readinessLabel = "Moderate Readiness";
-  }
-
-
-  // Prototype package band
-  let packageBand = "₹3–5 LPA";
-
-  if (readiness >= 80) {
-    packageBand = "₹8–12 LPA";
-  } else if (readiness >= 70) {
-    packageBand = "₹6–8 LPA";
-  } else if (readiness >= 60) {
-    packageBand = "₹5–7 LPA";
-  }
+  // Estimated Package Band from existing ML prediction pipeline
+  const packageBand =
+    (predictionResult && (predictionResult.packageBand || predictionResult.package)) ||
+    calculatePackageBand(readiness);
 
 
   /*
@@ -272,13 +276,6 @@ function Prediction() {
               {packageBand}
             </div>
 
-
-            <p className="prototype-note">
-              This is a prototype output. The final version will
-              generate the package band using the trained
-              placement-prediction model.
-            </p>
-
           </div>
 
 
@@ -343,6 +340,11 @@ function Prediction() {
               <InputBox
                 title="Certifications"
                 value={profile.certifications ?? 0}
+              />
+
+              <InputBox
+                title="Internships"
+                value={profile.internships ?? 0}
               />
 
             </div>
