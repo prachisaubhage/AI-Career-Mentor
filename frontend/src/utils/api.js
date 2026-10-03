@@ -15,4 +15,5 @@ export const API_ENDPOINTS = {
   HEALTH: `${API_BASE_URL}/api/health`,
   PROFILE: `${API_BASE_URL}/api/profile`,
   DASHBOARD: `${API_BASE_URL}/api/dashboard`,
+  PREDICTION: `${API_BASE_URL}/api/prediction/predict`,
 };
