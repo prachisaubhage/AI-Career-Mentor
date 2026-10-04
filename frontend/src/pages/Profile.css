@@ -777,6 +777,83 @@
   letter-spacing: 0.5px;
 }
 
+/* =========================================
+   SKILL ASSESSMENT SCORE GUIDE
+========================================= */
+
+.skill-score-guide {
+  margin-top: 22px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.skill-score-guide-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.skill-score-guide-header h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.skill-score-guide-header span {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.skill-score-guide-table-wrapper {
+  overflow-x: auto;
+}
+
+.skill-score-guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.skill-score-guide-table th {
+  text-align: left;
+  padding: 9px 14px;
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+  font-size: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.skill-score-guide-table th:first-child {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  width: 120px;
+}
+
+.skill-score-guide-table th:last-child {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.skill-score-guide-table td {
+  padding: 10px 14px;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.skill-score-guide-table tr:last-child td {
+  border-bottom: none;
+}
+
+.skill-score-guide-table td strong {
+  color: #4f46e5;
+  font-weight: 700;
+}
+
 
 /* =========================================
    RESPONSIVE

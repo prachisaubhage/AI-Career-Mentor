@@ -457,6 +457,46 @@ function Profile() {
           />
 
         </div>
+
+        {/* Score Range Guide */}
+        <div className="skill-score-guide">
+          <div className="skill-score-guide-header">
+            <h4>Score Range Guide</h4>
+            <span>Self-assessment reference</span>
+          </div>
+          <div className="skill-score-guide-table-wrapper">
+            <table className="skill-score-guide-table">
+              <thead>
+                <tr>
+                  <th>Score</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>0–20</strong></td>
+                  <td>Beginner / almost no knowledge</td>
+                </tr>
+                <tr>
+                  <td><strong>21–40</strong></td>
+                  <td>Basic knowledge</td>
+                </tr>
+                <tr>
+                  <td><strong>41–60</strong></td>
+                  <td>Intermediate</td>
+                </tr>
+                <tr>
+                  <td><strong>61–80</strong></td>
+                  <td>Good</td>
+                </tr>
+                <tr>
+                  <td><strong>81–100</strong></td>
+                  <td>Strong / advanced</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
 

@@ -1,10 +1,5 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
-import {
-  getStoredPrediction,
-  getPlacementPrediction,
-} from "../services/predictionService";
 import {
   getCurrentUser,
   getCurrentUserEmail,
@@ -107,41 +102,6 @@ function Dashboard() {
     readinessLabel = "Moderate Readiness";
   }
 
-  // ---- Estimated Package: consumes the EXACT SAME ML model prediction pipeline result as Placement Prediction ----
-  const [packageBand, setPackageBand] = useState(() => {
-    const stored = getStoredPrediction();
-    if (stored && (stored.packageBand || stored.package)) {
-      return stored.packageBand || stored.package;
-    }
-    return hasRealData ? "Loading..." : "Not available yet";
-  });
-
-  useEffect(() => {
-    if (!hasRealData) {
-      setPackageBand("Not available yet");
-      return;
-    }
-
-    const handleUpdate = (e) => {
-      const updated = e.detail;
-      if (updated && (updated.packageBand || updated.package)) {
-        setPackageBand(updated.packageBand || updated.package);
-      }
-    };
-    window.addEventListener("careerMentorPredictionUpdated", handleUpdate);
-
-    // Reuse existing ML prediction pipeline / Placement Prediction result
-    getPlacementPrediction(profile, email).then((res) => {
-      if (res && (res.packageBand || res.package)) {
-        setPackageBand(res.packageBand || res.package);
-      }
-    });
-
-    return () => {
-      window.removeEventListener("careerMentorPredictionUpdated", handleUpdate);
-    };
-  }, [profile, email, hasRealData]);
-
   return (
     <Layout>
       {/* ================= HEADER ================= */}
@@ -162,7 +122,7 @@ function Dashboard() {
       </div>
 
       {/* ================= TOP STATISTICS ================= */}
-      <div className="stats-grid">
+      <div className="stats-grid dashboard-top-stats">
         {/* READINESS */}
         <div className="stat-card highlight">
           <div className="stat-top">
@@ -177,20 +137,6 @@ function Dashboard() {
             {hasRealData
               ? "Based on profile & activity"
               : "Complete your profile & assessments to generate readiness"}
-          </small>
-        </div>
-
-        {/* PACKAGE */}
-        <div className="stat-card">
-          <div className="stat-top">
-            <span>Estimated Package</span>
-            <span>₹</span>
-          </div>
-          <h2>{packageBand}</h2>
-          <small>
-            {hasRealData
-              ? "Estimated package range"
-              : "Complete your profile & assessments"}
           </small>
         </div>
 
