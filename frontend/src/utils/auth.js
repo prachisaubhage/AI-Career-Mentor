@@ -197,6 +197,41 @@ export function getInitials(name) {
 // AUTH ACTIONS
 // =======================================================
 
+// Helper: HTTP request with timeout
+const REQUEST_TIMEOUT_MS = 12000;
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = REQUEST_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    return response;
+  } catch (err) {
+    if (err.name === "AbortError") {
+      throw new Error(
+        "Request timed out after 12 seconds. Please check your connection or server status and try again."
+      );
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function safeParseJson(response) {
+  try {
+    const text = await response.text();
+    return JSON.parse(text);
+  } catch {
+    return {
+      message: response.statusText || "Unexpected server response format. Please try again.",
+    };
+  }
+}
+
 /**
  * Log in an existing student (calls backend API, persists session)
  */
@@ -204,7 +239,7 @@ export async function loginUser(email, password) {
   const normalizedEmail = email.trim().toLowerCase();
 
   try {
-    const response = await fetch(API_ENDPOINTS.LOGIN, {
+    const response = await fetchWithTimeout(API_ENDPOINTS.LOGIN, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -215,7 +250,7 @@ export async function loginUser(email, password) {
       }),
     });
 
-    const data = await response.json();
+    const data = await safeParseJson(response);
 
     if (response.ok && data.token) {
       localStorage.setItem("careerMentorToken", data.token);
@@ -321,8 +356,8 @@ export async function registerUser(fullName, email, password) {
   const normalizedEmail = email.trim().toLowerCase();
   const studentFullName = fullName.trim();
 
-  // Send registration request to backend API
-  const response = await fetch(API_ENDPOINTS.SIGNUP, {
+  // Send registration request to backend API with timeout protection
+  const response = await fetchWithTimeout(API_ENDPOINTS.SIGNUP, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -335,7 +370,7 @@ export async function registerUser(fullName, email, password) {
     }),
   });
 
-  const data = await response.json();
+  const data = await safeParseJson(response);
 
   if (!response.ok) {
     const errorMsg = data.message || "Registration failed. Please try again.";

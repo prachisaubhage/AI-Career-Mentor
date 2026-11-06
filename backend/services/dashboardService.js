@@ -73,10 +73,13 @@ const getCodingStatsForUser = async (userId) => {
   if (!attempts || attempts.length === 0) {
     return {
       solved: 0,
+      problemsSolved: 0,
       attempted: 0,
+      problemsAttempted: 0,
       easy: 0,
       medium: 0,
       hard: 0,
+      accuracy: 0,
     };
   }
 
@@ -99,10 +102,13 @@ const getCodingStatsForUser = async (userId) => {
 
   return {
     solved: solvedSet.size,
+    problemsSolved: solvedSet.size,
     attempted: attempts.length,
+    problemsAttempted: attempts.length,
     easy: easySolved,
     medium: mediumSolved,
     hard: hardSolved,
+    accuracy: attempts.length > 0 ? Math.round((solvedSet.size / attempts.length) * 100) : 0,
   };
 };
 
@@ -117,10 +123,14 @@ const getAptitudeStatsForUser = async (userId) => {
     return {
       attempted: 0,
       completed: 0,
+      testsCompleted: 0,
+      totalQuestions: 0,
       correct: 0,
+      correctAnswers: 0,
       incorrect: 0,
       score: 0,
       average: 0,
+      accuracy: 0,
     };
   }
 
@@ -135,14 +145,19 @@ const getAptitudeStatsForUser = async (userId) => {
 
   const incorrect = attempted - correct;
   const average = attempted > 0 ? Math.round((correct / attempted) * 100) : 0;
+  const testsCount = Math.ceil(attempted / 5) || (attempted > 0 ? 1 : 0);
 
   return {
     attempted,
-    completed: attempted,
+    completed: testsCount,
+    testsCompleted: testsCount,
+    totalQuestions: attempted,
     correct,
+    correctAnswers: correct,
     incorrect,
     score: totalScore,
     average,
+    accuracy: average,
   };
 };
 

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 const { sanitizeEmail } = require('../utils/validators');
@@ -9,6 +10,13 @@ const { sanitizeEmail } = require('../utils/validators');
  */
 const register = async (req, res, next) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database connection is initializing. Please try again in a few seconds.',
+      });
+    }
+
     const rawName = req.body.fullName || req.body.name || '';
     const { email, mobile, password } = req.body;
     const sanitizedEmail = sanitizeEmail(email);
@@ -82,6 +90,12 @@ const register = async (req, res, next) => {
     });
   } catch (error) {
     console.error('Signup error:', error.message);
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: 'An account with this email address already exists',
+      });
+    }
     next(error);
   }
 };
@@ -93,6 +107,13 @@ const register = async (req, res, next) => {
  */
 const login = async (req, res, next) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database connection is initializing. Please try again in a few seconds.',
+      });
+    }
+
     const { email, password } = req.body;
     const sanitizedEmail = sanitizeEmail(email);
 

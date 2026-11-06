@@ -22,11 +22,19 @@ function Login({ initialMode = "login" }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setError("");
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (isSignUp) {
       if (!fullName.trim() || !email.trim() || !password.trim()) {
         setError("Please enter your full name, email, and password to sign up.");
+        return;
+      }
+
+      if (!emailRegex.test(email.trim())) {
+        setError("Please enter a valid email address.");
         return;
       }
 
@@ -50,6 +58,11 @@ function Login({ initialMode = "login" }) {
     } else {
       if (!email.trim() || !password.trim()) {
         setError("Please enter your email and password to log in.");
+        return;
+      }
+
+      if (!emailRegex.test(email.trim())) {
+        setError("Please enter a valid email address.");
         return;
       }
 
@@ -156,6 +169,7 @@ function Login({ initialMode = "login" }) {
                 placeholder="e.g. Rahul Sharma"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
+                disabled={loading}
               />
             </>
           )}
@@ -167,6 +181,7 @@ function Login({ initialMode = "login" }) {
             placeholder="student@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
           />
 
           <label htmlFor="auth-password">Password</label>
@@ -176,6 +191,7 @@ function Login({ initialMode = "login" }) {
             placeholder={isSignUp ? "Create a password" : "Enter password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
           />
 
           <button

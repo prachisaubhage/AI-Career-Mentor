@@ -10,6 +10,8 @@ const connectDB = async () => {
 
     const conn = await mongoose.connect(mongoUri, {
       dbName: 'ai_career_mentor',
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 10000,
     });
     console.log('MongoDB connected successfully');
     console.log(`Database: ${conn.connection.name}`);

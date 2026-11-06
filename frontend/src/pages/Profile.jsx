@@ -18,6 +18,7 @@ import {
   removeResume,
   calcProfileCompletion,
 } from "../utils/auth";
+import { API_ENDPOINTS } from "../utils/api";
 import "./Profile.css";
 
 // ============================================================
@@ -152,6 +153,60 @@ function Profile() {
     setResume(null);
   }
 
+  // ---- REMOTE MONGODB RECORDS SYNC ON MOUNT ----
+  useEffect(() => {
+    const token = localStorage.getItem("careerMentorToken");
+    if (!token) return;
+
+    async function loadRemoteRecords() {
+      try {
+        const [projRes, certRes, internRes, achRes] = await Promise.all([
+          fetch(API_ENDPOINTS.PROJECTS, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(API_ENDPOINTS.CERTIFICATIONS, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(API_ENDPOINTS.INTERNSHIPS, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(API_ENDPOINTS.ACHIEVEMENTS, { headers: { Authorization: `Bearer ${token}` } }),
+        ]);
+
+        if (projRes.ok) {
+          const data = await projRes.json();
+          if (Array.isArray(data.projects) && data.projects.length > 0) {
+            const norm = data.projects.map((p) => ({ ...p, id: p._id }));
+            setProjects(norm);
+            saveProjects(currentUserEmail, norm);
+          }
+        }
+        if (certRes.ok) {
+          const data = await certRes.json();
+          if (Array.isArray(data.certifications) && data.certifications.length > 0) {
+            const norm = data.certifications.map((c) => ({ ...c, id: c._id }));
+            setCertifications(norm);
+            saveCertifications(currentUserEmail, norm);
+          }
+        }
+        if (internRes.ok) {
+          const data = await internRes.json();
+          if (Array.isArray(data.internships) && data.internships.length > 0) {
+            const norm = data.internships.map((i) => ({ ...i, id: i._id }));
+            setInternships(norm);
+            saveInternships(currentUserEmail, norm);
+          }
+        }
+        if (achRes.ok) {
+          const data = await achRes.json();
+          if (Array.isArray(data.achievements) && data.achievements.length > 0) {
+            const norm = data.achievements.map((a) => ({ ...a, id: a._id }));
+            setAchievements(norm);
+            saveAchievements(currentUserEmail, norm);
+          }
+        }
+      } catch (err) {
+        console.warn("Could not sync profile records with backend:", err);
+      }
+    }
+
+    loadRemoteRecords();
+  }, [currentUserEmail]);
+
   // ---- PROJECTS ----
 
   function openAddProject() {
@@ -163,21 +218,89 @@ function Profile() {
   function openViewProject(record) {
     setViewModal({ open: true, type: "project", record });
   }
-  function deleteProject(id) {
-    const updated = projects.filter((p) => p.id !== id);
+  async function deleteProject(id) {
+    if (!window.confirm("Are you sure you want to delete this project?")) return;
+    const token = localStorage.getItem("careerMentorToken");
+    if (token) {
+      try {
+        await fetch(`${API_ENDPOINTS.PROJECTS}/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (err) {
+        console.warn("Could not delete project from server:", err);
+      }
+    }
+    const updated = projects.filter((p) => p.id !== id && p._id !== id);
     setProjects(updated);
     saveProjects(currentUserEmail, updated);
+    setMessage("Project deleted successfully.");
+    setTimeout(() => setMessage(""), 3000);
   }
-  function handleSaveProject(data) {
+  async function handleSaveProject(data) {
+    const token = localStorage.getItem("careerMentorToken");
+    let recordToSave = { ...data };
+
+    if (token) {
+      try {
+        if (projectModal.mode === "add") {
+          const res = await fetch(API_ENDPOINTS.PROJECTS, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.project) {
+              recordToSave = { ...json.project, id: json.project._id };
+            }
+          }
+        } else {
+          const targetId = data.id || data._id;
+          const res = await fetch(`${API_ENDPOINTS.PROJECTS}/${targetId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.project) {
+              recordToSave = { ...json.project, id: json.project._id };
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Error saving project to backend:", err);
+      }
+    }
+
+    if (!recordToSave.id && !recordToSave._id) {
+      recordToSave.id = genId();
+    }
+
     let updated;
     if (projectModal.mode === "add") {
-      updated = [...projects, { ...data, id: genId() }];
+      updated = [...projects, recordToSave];
+      setMessage("Project added successfully.");
     } else {
-      updated = projects.map((p) => (p.id === data.id ? data : p));
+      updated = projects.map((p) =>
+        p.id === data.id || p._id === data.id || (data._id && (p.id === data._id || p._id === data._id))
+          ? recordToSave
+          : p
+      );
+      setMessage("Project updated successfully.");
     }
+
     setProjects(updated);
     saveProjects(currentUserEmail, updated);
     setProjectModal({ open: false, mode: "add", record: null });
+    setTimeout(() => setMessage(""), 3000);
   }
 
   // ---- CERTIFICATIONS ----
@@ -191,21 +314,89 @@ function Profile() {
   function openViewCert(record) {
     setViewModal({ open: true, type: "cert", record });
   }
-  function deleteCert(id) {
-    const updated = certifications.filter((c) => c.id !== id);
+  async function deleteCert(id) {
+    if (!window.confirm("Are you sure you want to delete this certification?")) return;
+    const token = localStorage.getItem("careerMentorToken");
+    if (token) {
+      try {
+        await fetch(`${API_ENDPOINTS.CERTIFICATIONS}/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (err) {
+        console.warn("Could not delete certification from server:", err);
+      }
+    }
+    const updated = certifications.filter((c) => c.id !== id && c._id !== id);
     setCertifications(updated);
     saveCertifications(currentUserEmail, updated);
+    setMessage("Certification deleted successfully.");
+    setTimeout(() => setMessage(""), 3000);
   }
-  function handleSaveCert(data) {
+  async function handleSaveCert(data) {
+    const token = localStorage.getItem("careerMentorToken");
+    let recordToSave = { ...data };
+
+    if (token) {
+      try {
+        if (certModal.mode === "add") {
+          const res = await fetch(API_ENDPOINTS.CERTIFICATIONS, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.certification) {
+              recordToSave = { ...json.certification, id: json.certification._id };
+            }
+          }
+        } else {
+          const targetId = data.id || data._id;
+          const res = await fetch(`${API_ENDPOINTS.CERTIFICATIONS}/${targetId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.certification) {
+              recordToSave = { ...json.certification, id: json.certification._id };
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Error saving certification to backend:", err);
+      }
+    }
+
+    if (!recordToSave.id && !recordToSave._id) {
+      recordToSave.id = genId();
+    }
+
     let updated;
     if (certModal.mode === "add") {
-      updated = [...certifications, { ...data, id: genId() }];
+      updated = [...certifications, recordToSave];
+      setMessage("Certification added successfully.");
     } else {
-      updated = certifications.map((c) => (c.id === data.id ? data : c));
+      updated = certifications.map((c) =>
+        c.id === data.id || c._id === data.id || (data._id && (c.id === data._id || c._id === data._id))
+          ? recordToSave
+          : c
+      );
+      setMessage("Certification updated successfully.");
     }
+
     setCertifications(updated);
     saveCertifications(currentUserEmail, updated);
     setCertModal({ open: false, mode: "add", record: null });
+    setTimeout(() => setMessage(""), 3000);
   }
 
   // ---- INTERNSHIPS ----
@@ -219,21 +410,89 @@ function Profile() {
   function openViewInternship(record) {
     setViewModal({ open: true, type: "internship", record });
   }
-  function deleteInternship(id) {
-    const updated = internships.filter((i) => i.id !== id);
+  async function deleteInternship(id) {
+    if (!window.confirm("Are you sure you want to delete this internship?")) return;
+    const token = localStorage.getItem("careerMentorToken");
+    if (token) {
+      try {
+        await fetch(`${API_ENDPOINTS.INTERNSHIPS}/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (err) {
+        console.warn("Could not delete internship from server:", err);
+      }
+    }
+    const updated = internships.filter((i) => i.id !== id && i._id !== id);
     setInternships(updated);
     saveInternships(currentUserEmail, updated);
+    setMessage("Internship deleted successfully.");
+    setTimeout(() => setMessage(""), 3000);
   }
-  function handleSaveInternship(data) {
+  async function handleSaveInternship(data) {
+    const token = localStorage.getItem("careerMentorToken");
+    let recordToSave = { ...data };
+
+    if (token) {
+      try {
+        if (internshipModal.mode === "add") {
+          const res = await fetch(API_ENDPOINTS.INTERNSHIPS, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.internship) {
+              recordToSave = { ...json.internship, id: json.internship._id };
+            }
+          }
+        } else {
+          const targetId = data.id || data._id;
+          const res = await fetch(`${API_ENDPOINTS.INTERNSHIPS}/${targetId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.internship) {
+              recordToSave = { ...json.internship, id: json.internship._id };
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Error saving internship to backend:", err);
+      }
+    }
+
+    if (!recordToSave.id && !recordToSave._id) {
+      recordToSave.id = genId();
+    }
+
     let updated;
     if (internshipModal.mode === "add") {
-      updated = [...internships, { ...data, id: genId() }];
+      updated = [...internships, recordToSave];
+      setMessage("Internship added successfully.");
     } else {
-      updated = internships.map((i) => (i.id === data.id ? data : i));
+      updated = internships.map((i) =>
+        i.id === data.id || i._id === data.id || (data._id && (i.id === data._id || i._id === data._id))
+          ? recordToSave
+          : i
+      );
+      setMessage("Internship updated successfully.");
     }
+
     setInternships(updated);
     saveInternships(currentUserEmail, updated);
     setInternshipModal({ open: false, mode: "add", record: null });
+    setTimeout(() => setMessage(""), 3000);
   }
 
   // ---- ACHIEVEMENTS ----
@@ -247,21 +506,89 @@ function Profile() {
   function openViewAchievement(record) {
     setViewModal({ open: true, type: "achievement", record });
   }
-  function deleteAchievement(id) {
-    const updated = achievements.filter((a) => a.id !== id);
+  async function deleteAchievement(id) {
+    if (!window.confirm("Are you sure you want to delete this achievement?")) return;
+    const token = localStorage.getItem("careerMentorToken");
+    if (token) {
+      try {
+        await fetch(`${API_ENDPOINTS.ACHIEVEMENTS}/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (err) {
+        console.warn("Could not delete achievement from server:", err);
+      }
+    }
+    const updated = achievements.filter((a) => a.id !== id && a._id !== id);
     setAchievements(updated);
     saveAchievements(currentUserEmail, updated);
+    setMessage("Achievement deleted successfully.");
+    setTimeout(() => setMessage(""), 3000);
   }
-  function handleSaveAchievement(data) {
+  async function handleSaveAchievement(data) {
+    const token = localStorage.getItem("careerMentorToken");
+    let recordToSave = { ...data };
+
+    if (token) {
+      try {
+        if (achievementModal.mode === "add") {
+          const res = await fetch(API_ENDPOINTS.ACHIEVEMENTS, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.achievement) {
+              recordToSave = { ...json.achievement, id: json.achievement._id };
+            }
+          }
+        } else {
+          const targetId = data.id || data._id;
+          const res = await fetch(`${API_ENDPOINTS.ACHIEVEMENTS}/${targetId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.achievement) {
+              recordToSave = { ...json.achievement, id: json.achievement._id };
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Error saving achievement to backend:", err);
+      }
+    }
+
+    if (!recordToSave.id && !recordToSave._id) {
+      recordToSave.id = genId();
+    }
+
     let updated;
     if (achievementModal.mode === "add") {
-      updated = [...achievements, { ...data, id: genId() }];
+      updated = [...achievements, recordToSave];
+      setMessage("Achievement added successfully.");
     } else {
-      updated = achievements.map((a) => (a.id === data.id ? data : a));
+      updated = achievements.map((a) =>
+        a.id === data.id || a._id === data.id || (data._id && (a.id === data._id || a._id === data._id))
+          ? recordToSave
+          : a
+      );
+      setMessage("Achievement updated successfully.");
     }
+
     setAchievements(updated);
     saveAchievements(currentUserEmail, updated);
     setAchievementModal({ open: false, mode: "add", record: null });
+    setTimeout(() => setMessage(""), 3000);
   }
 
   // ============================================================

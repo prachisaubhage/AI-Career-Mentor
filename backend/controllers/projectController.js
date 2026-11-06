@@ -34,9 +34,10 @@ const formatProjectFile = (file) => ({
  */
 const createProject = async (req, res, next) => {
   try {
-    const { name, description, technologies, githubUrl, liveUrl, completionDate } = req.body;
+    const { name, title, description, technologies, techStack, githubUrl, githubLink, liveUrl, liveLink, completionDate } = req.body;
+    const finalName = (name || title || '').trim();
 
-    if (!name || !name.trim()) {
+    if (!finalName) {
       return res.status(400).json({
         success: false,
         message: 'Project name is required',
@@ -47,19 +48,21 @@ const createProject = async (req, res, next) => {
 
     const project = await Project.create({
       userId: req.user._id,
-      name: name.trim(),
+      name: finalName,
       description: description || '',
-      technologies: technologies || '',
-      githubUrl: githubUrl || '',
-      liveUrl: liveUrl || '',
+      technologies: technologies || techStack || '',
+      githubUrl: githubUrl || githubLink || '',
+      liveUrl: liveUrl || liveLink || '',
       completionDate: completionDate || '',
       files,
     });
 
+    const obj = project.toObject();
     return res.status(201).json({
       success: true,
       message: 'Project created successfully',
       project,
+      ...obj,
     });
   } catch (error) {
     next(error);
@@ -78,6 +81,7 @@ const getProjects = async (req, res, next) => {
       success: true,
       count: projects.length,
       projects,
+      data: projects,
     });
   } catch (error) {
     next(error);
@@ -131,13 +135,13 @@ const updateProject = async (req, res, next) => {
       });
     }
 
-    const { name, description, technologies, githubUrl, liveUrl, completionDate } = req.body;
+    const { name, title, description, technologies, techStack, githubUrl, githubLink, liveUrl, liveLink, completionDate } = req.body;
 
-    if (name !== undefined) project.name = name.trim();
+    if (name !== undefined || title !== undefined) project.name = (name || title || '').trim();
     if (description !== undefined) project.description = description;
-    if (technologies !== undefined) project.technologies = technologies;
-    if (githubUrl !== undefined) project.githubUrl = githubUrl;
-    if (liveUrl !== undefined) project.liveUrl = liveUrl;
+    if (technologies !== undefined || techStack !== undefined) project.technologies = technologies || techStack;
+    if (githubUrl !== undefined || githubLink !== undefined) project.githubUrl = githubUrl || githubLink;
+    if (liveUrl !== undefined || liveLink !== undefined) project.liveUrl = liveUrl || liveLink;
     if (completionDate !== undefined) project.completionDate = completionDate;
 
     // Append newly uploaded files if any
@@ -147,11 +151,13 @@ const updateProject = async (req, res, next) => {
     }
 
     const updated = await project.save();
+    const obj = updated.toObject();
 
     return res.status(200).json({
       success: true,
       message: 'Project updated successfully',
       project: updated,
+      ...obj,
     });
   } catch (error) {
     next(error);
